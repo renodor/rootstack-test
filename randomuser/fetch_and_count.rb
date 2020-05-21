@@ -45,7 +45,7 @@ puts users
 # print result
 # (By updating our result and maximum at each iteration during our loops,
 # we prevent doing an aditional last loop around our hash to find the maximum)
-puts result
+puts "most repeted letter: #{result}"
 
 # Aditionnal note: if different letters have the same (maximum) number of repetition,
 # the result will be the first letter that reached its maximum
