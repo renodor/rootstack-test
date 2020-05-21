@@ -5,7 +5,8 @@ require 'open-uri'
 target_age = 50
 
 # fetch one random user
-# we used the randomuser 'inc' parameter to only fetch user names and age (because we don't need the rest of the data here)
+# we used the randomuser 'inc' parameter to only fetch user names and age
+# (because we don't need the rest of the data here so it, optimize our program)
 def fetch_user
   url = 'https://randomuser.me/api?inc=name,dob'
   JSON.parse(open(url).read)['results'][0]

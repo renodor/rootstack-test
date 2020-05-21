@@ -5,7 +5,8 @@ require 'open-uri'
 number_of_person = 10
 
 # get data from randomuser API
-# we used the randomuser 'inc' parameter to only fetch user names (because we don't need the rest of the data here)
+# we used the randomuser 'inc' parameter to only fetch user names
+# (because we don't need the rest of the data here, so it optimize our program)
 url = "https://randomuser.me/api/?inc=name&results=#{number_of_person}"
 data = JSON.parse(open(url).read)
 users = data['results']
