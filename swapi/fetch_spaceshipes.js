@@ -40,18 +40,10 @@ const fetchMovie = (movie) => {
 };
 
 
-// const fetchOnePage = () => {
-
-// }
-
-
 const fetchSpaceships = async (url, passengerQty) => {
   const results = await fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        // if (data['next']) {
-        //   fetchSpaceships(data['next'], passengerQty);
-        // }
         return data['results'].map((spaceShip) => {
           const enoughSpace = checkPassengers(spaceShip['passengers'], passengerQty);
           const enoughAutonomy = checkAutonomy(spaceShip['consumables']);
