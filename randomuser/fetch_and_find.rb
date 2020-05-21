@@ -1,20 +1,35 @@
 require 'json'
 require 'open-uri'
 
-target_age = 40
+# define the target age we want to find
+target_age = 50
 
+# fetch one random user
+# we used the randomuser 'inc' parameter to only fetch user names and age (because we don't need the rest of the data here)
 def fetch_user
-  url = 'https://randomuser.me/api'
+  url = 'https://randomuser.me/api?inc=name,dob'
   JSON.parse(open(url).read)['results'][0]
 end
 
-def find(age)
+# find a random user with a specific age
+def find_user(age)
+  # initialize our user_age variable (with an impossible age)
   user_age = -1
+
+  # create a loop that won't stop until we find an user with the correct age
   until user_age > age
     user = fetch_user
     user_age = user['dob']['age']
+    # print a message if we don't find an user yet,
+    # to let know that the program is still running
+    puts "#{user['name']['first']} is too young... (#{user['dob']['age']} years old) Still looking..." if user_age < age
   end
-  puts "Found #{user['name']['first']}! (#{user['dob']['age']} years old)."
+  # when we find an user with the correct age, return a string with its basic infos
+  "Found #{user['name']['first']}! (#{user['dob']['age']} years old)."
 end
 
-find(target_age)
+# print the target age
+puts "Target age is: #{target_age}"
+
+# print the result
+puts find_user(target_age)
