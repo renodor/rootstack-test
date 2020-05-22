@@ -13,13 +13,13 @@ input {
   width: 50px;
 }
 
-.fastest-ship {
+.best-result {
   border-bottom: 1px solid lightgray;
   padding-bottom: 10px;
   margin-bottom: 20px;
 }
 
-.fastest-ship span {
+.best-result span {
   color: #fff469;
   font-size: 20px;
   font-weight: 700;

@@ -71,7 +71,7 @@ const fetchShips = async (url, passengerQty) => {
             return checkMovies(ship['films']).then((goodMovies) => {
               if (goodMovies) {
                 // if we find a ship that passed all filters,
-                // we return its name and its speed
+                // we return and object with its name and its speed
                 return {'name': ship['name'], 'speed': ship['MGLT']};
               } else {
                 // false here means the ship don't belong to the correct movies
@@ -130,8 +130,18 @@ const fetchAllShips = async (url, passengerQty) => {
 
   // if we found only 1 ship, we put it as the fastest one by default
   } else if (cleanedResults.length == 1) {
-    fastestShip = `${cleanedResults[0]['name']} (unknown speed...)`;
+    fastestShip = `${cleanedResults[0]['name']} (speed: ${cleanedResults[0]['speed']} MGLT)`;
   }
+
+  // if we do have results but we can't determine what is the fastest ship
+  // if may needs that all found ships have 'unknown' speed...
+  // in that case we take the first one by default
+  if (cleanedResults.length > 1 && !fastestShip) {
+    fastestShip = `${cleanedResults[0]['name']} (speed: unknown...)`;
+  }
+
+  // i kept this console log if you want to check the raw retrieved data
+  console.log(cleanedResults);
 
   // once we did all that, we can display results
   // (if we don't find anything, cleanedResults and fastestShip will be empty)
@@ -180,7 +190,7 @@ const input = document.querySelector('.qty-input');
 const btn = document.querySelector('button');
 
 // the divs where we will display results
-const fastestShipDiv = document.querySelector('.fastest-ship');
+const fastestShipDiv = document.querySelector('.best-result');
 const otherResultsDiv = document.querySelector('.other-results');
 
 // trigger the action when the button is clicked

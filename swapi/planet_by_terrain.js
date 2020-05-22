@@ -55,114 +55,128 @@ const checkMovies = async (movieUrls) => {
   // if we don't find any good movie, the method will return undefined
 };
 
-// method to fetch 1 page of the swapi starship API
-const fetchShips = async (url, passengerQty) => {
-  const ships = await fetchData(url)
-      .then((data) => {
-        return data['results'].map((ship) => {
-          // Once we fetched the results of the page, we have to check if the ship has:
-          // enough space and enough autonomy
-          const enoughSpace = checkPassengers(ship['passengers'], passengerQty);
-          const enoughAutonomy = checkAutonomy(ship['consumables']);
 
-          // if we found one ship that has both enough space and enough autonomy
-          // we hae to check if it appears in the good movies
-          if (enoughSpace && enoughAutonomy) {
-            return checkMovies(ship['films']).then((goodMovies) => {
-              if (goodMovies) {
-                // if we find a ship that passed all filters,
-                // we return its name and its speed
-                return {'name': ship['name'], 'speed': ship['MGLT']};
-              } else {
-                // false here means the ship don't belong to the correct movies
-                // (we could return a custom message instead of simple 'false')
-                return false;
-              }
-            });
-          } else {
-            // false here means the ship don't don't have enough space or enough autonomy
-            // (we could return a custom message instead of simple 'false')
-            return false;
-          }
-        });
+// method to fetch 1 page of the swapi starship API
+const fetchPlanets = async (url, terrain) => {
+  const planets = await fetchData(url)
+      .then((data) => {
+        return data['results'].filter((planet) => {
+            plannetTerrains = planet['terrain'].split(', ');
+
+            if (plannetTerrains.includes(terrain)) {
+              return {'name': planet['name'], 'population': planet['population']};
+            }
+            // if ([plannetTerrains].includes(terrain)) {
+            //   console.log('hourra');
+            //   return true;
+            // }
+        })
+        //   // Once we fetched the results of the page, we have to check if the ship has:
+        //   // enough space and enough autonomy
+        //   const enoughSpace = checkPassengers(ship['passengers'], passengerQty);
+        //   const enoughAutonomy = checkAutonomy(ship['consumables']);
+
+        //   // if we found one ship that has both enough space and enough autonomy
+        //   // we hae to check if it appears in the good movies
+        //   if (enoughSpace && enoughAutonomy) {
+        //     return checkMovies(ship['films']).then((goodMovies) => {
+        //       if (goodMovies) {
+        //         // if we find a ship that passed all filters,
+        //         // we return its name and its speed
+        //         return {'name': ship['name'], 'speed': ship['MGLT']};
+        //       } else {
+        //         // false here means the ship don't belong to the correct movies
+        //         // (we could return a custom message instead of simple 'false')
+        //         return false;
+        //       }
+        //     });
+        //   } else {
+        //     // false here means the ship don't don't have enough space or enough autonomy
+        //     // (we could return a custom message instead of simple 'false')
+        //     return false;
+        //   }
+        // });
       });
 
   // we return all the ships we found, making sure to resolve al promises
-  return Promise.all(ships);
+  return Promise.all(planets);
 };
 
 
 // method to fetch all ships from the swapi API, and to clean results
-const fetchAllShips = async (url, passengerQty) => {
+const fetchAllPlanets = async (url, terrain) => {
   const results = [];
 
   // we have to featch page after page (to consolidate results in the same array)
   // so fetch one page, and as long as we find a 'next page', we continue
   while (url) {
-    results.push(await fetchShips(url, passengerQty));
+    results.push(await fetchPlanets(url, terrain));
     url = await fetchData(url).then((data) => data['next']);
   }
 
-  // once we got all results, we can flatten our array and remove 'false' value
+  // once we got all results, we can flatten our array
   // to have only the ships that passed all filters
-  cleanedResults = results.flat().filter(Boolean);
+  cleanedResults = results.flat();
 
   // we define variables that will contain our fastest ship
   // its id in the cleanedResults array and its speed
-  let maxSpeed = 0;
-  let fastestShip = '';
-  let fastestShipId = 0;
+  let maxPopulation = 0;
+  let mostPopulatedPlanet = '';
+  let mostPopulatedPlanetId = 0;
 
   // if we found more than 1 ship, we need to find the fastest one
   if (cleanedResults.length > 1) {
     // we loop over our found ships and compare its speed to the last one
-    cleanedResults.forEach((ship, i) => {
+    cleanedResults.forEach((planet, i) => {
       // if we find a ship faster than the last one we need to do three things:
       // - change the value of maxSpeed
       // - change the name of the fastest ship
       // - save the index of the fastest ship
-      if (parseInt(ship['speed']) > maxSpeed) {
-        maxSpeed = parseInt(ship['speed']);
-        fastestShip = `${ship['name']} (speed: ${ship['speed']} MGLT)`;
-        fastestShipId = i;
+      if (parseInt(planet['population']) > maxPopulation) {
+        maxSpeed = parseInt(planet['speed']);
+        mostPopulatedPlanet = `${planet['name']} (population: ${planet['population']})`;
+        mostPopulatedPlanetId = i;
       }
     });
 
   // if we found only 1 ship, we put it as the fastest one by default
   } else if (cleanedResults.length == 1) {
-    fastestShip = `${cleanedResults[0]['name']} (unknown speed...)`;
+    mostPopulatedPlanet = `${cleanedResults[0]['name']} (population: ${planet['population']})`;
   }
+
+  console.log(cleanedResults);
 
   // once we did all that, we can display results
   // (if we don't find anything, cleanedResults and fastestShip will be empty)
-  displayResults(cleanedResults, fastestShip, fastestShipId);
+  displayResults(cleanedResults, mostPopulatedPlanet, mostPopulatedPlanetId);
+
 };
 
 // method to display our results in the html page
-const displayResults = (ships, fastestShip, fastestShipId) => {
+const displayResults = (planets, mostPopulatedPlanet, mostPopulatedPlanetId) => {
   // we automatically clean previous results
-  fastestShipDiv.innerHTML = '';
+  bestResultDiv.innerHTML = '';
   otherResultsDiv.innerHTML = '';
 
   // if we found a fastest ship, we display it
   // (otherwise we display a custom message)
-  if (fastestShip) {
-    fastestShipDiv.innerHTML = `
-      <p>The fastest starwars ship for your search is:</p>
-      <p><span>${fastestShip}</span></p>`;
+  if (mostPopulatedPlanet) {
+    bestResultDiv.innerHTML = `
+      <p>The most populated StarWars planet for your search is:</p>
+      <p><span>${mostPopulatedPlanet}</span></p>`;
   } else {
-    fastestShipDiv.innerHTML = 'No fastest ship...';
+    bestResultDiv.innerHTML = 'No planets...';
   }
 
   // if we found other ships, we display it
   // (otherwise we display a custom message)
-  if (ships.length > 1) {
+  if (planets.length > 1) {
     otherResultsDiv.innerHTML = '<b>Here are other good candidates:</b>';
-    ships.forEach((ship, i) => {
-      // we make sure to exclude the fastest ship from the other results,
+    planets.forEach((planet, i) => {
+      // we make sure to exclude the fastest planet from the other results,
       // otherwise it will be repeated on the page...
-      if (i != fastestShipId) {
-        otherResultsDiv.insertAdjacentHTML('beforeend', `<p>${ship['name']}</p>`);
+      if (i != mostPopulatedPlanet) {
+        otherResultsDiv.insertAdjacentHTML('beforeend', `<p>${planet['name']}</p>`);
       }
     });
   } else {
@@ -171,7 +185,8 @@ const displayResults = (ships, fastestShip, fastestShipId) => {
 };
 
 // the url to fetch
-const spaceShipsUrl = 'https://swapi.dev/api/planets/';
+const planetsUrl = 'https://swapi.dev/api/planets/';
+fetchAllPlanets(planetsUrl, 'forests');
 
 // the input to get the number of passengers
 const input = document.querySelector('.qty-input');
@@ -180,7 +195,7 @@ const input = document.querySelector('.qty-input');
 const btn = document.querySelector('button');
 
 // the divs where we will display results
-const fastestShipDiv = document.querySelector('.fastest-ship');
+const bestResultDiv = document.querySelector('.best-result');
 const otherResultsDiv = document.querySelector('.other-results');
 
 // trigger the action when the button is clicked
@@ -189,5 +204,5 @@ btn.addEventListener('click', (event) => {
   if (input.value == null) {
     input.value = 0;
   }
-  fetchAllShips(spaceShipsUrl, input.value);
+  fetchAllShips(planetsUrl, input.value);
 });
