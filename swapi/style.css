@@ -1,4 +1,22 @@
 body {
   background-color: #120f29;
   color: white;
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+      display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.fastest-ship {
+  border-bottom: 1px solid lightgray;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.fastest-ship span {
+  color: #fff469;
+  font-size: 20px;
+  font-weight: 700;
 }

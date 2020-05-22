@@ -35,7 +35,7 @@ const fetchMovie = (movie) => {
   return fetch(movie)
       .then((response) => response.json())
       .then((data) => {
-        return [4, 5, 6, 1, 2, 3].includes(data['episode_id']);
+        return [1, 2, 3].includes(data['episode_id']);
       });
 };
 
@@ -66,75 +66,58 @@ const fetchSpaceships = async (url, passengerQty) => {
   return Promise.all(results);
 };
 
-const fetchAll = async (url) => {
-  const result1 = await fetchSpaceships(url, 10);
+const fetchAll = async (url, passengerQty) => {
+  const results = [];
 
-  const nextUrl = await fetch(url).then((response) => response.json()).then((data) => data['next']);
+  while (url) {
+    results.push(await fetchSpaceships(url, passengerQty));
+    url = await fetch(url).then((response) => response.json()).then((data) => data['next']);
+  }
 
-  const result2 = await fetchSpaceships(nextUrl, 10);
 
-  // const result2 = await fetchSpaceships(url, 10);
-  allStarShips = [];
+  cleanedResults = results.flat().filter(Boolean);
 
-  result1.forEach((result) => {
-    if (result) {
-      allStarShips.push(result);
-    }
-  });
-
-  result2.forEach((result) => {
-    if (result) {
-      allStarShips.push(result);
-    }
-  });
-
-  console.log(allStarShips);
-
-  maxSpeed = 0;
-  fastestShip = '';
-  allStarShips.forEach((ship) => {
+  let maxSpeed = 0;
+  let fastestShip = '';
+  let fastestShipId = 0;
+  cleanedResults.forEach((ship, i) => {
     if (parseInt(ship['speed']) > maxSpeed) {
       maxSpeed = parseInt(ship['speed']);
-      fastestShip = ship['name'];
+      fastestShip = `${ship['name']} - (speed: ${ship['speed']} MGLT)`;
+      fastestShipId = i;
     }
   });
 
-  console.log(fastestShip);
-  console.log(maxSpeed);
+  cleanedResults.splice(fastestShipId);
+
+
+  if (!fastestShip) {
+    fastestShip = `${cleanedResults[0]['name']} (unknown speed...)`;
+  }
+
+  displayResults(cleanedResults, fastestShip);
 };
 
-fetchAll(spaceShipsUrl);
 
-// const displayResults = (starShips) => {
-//   let maxSpeed = 0;
-//   starShips.forEach((ship) => {
-//     if (ship['speed'] > maxSpeed) {
-//       console.log(maxSpeed);
-//       maxSpeed = ship['speed'];
-//       // console.log('iiiiici ' + ship['name'] + " " + ship['speed']);
-//     }
-//   });
-  // console.log(starShips);
-  // let maxSpeed = 0;
-  // let fastestStarship = '';
+const displayResults = (ships, fastestShip) => {
+  fastestShipDiv.innerHTML = '';
+  otherResultsDiv.innerHTML = '';
+  fastestShipDiv.innerHTML = `
+    <p>The fastest starwars ship for your search is:</p>
+    <p><span>${fastestShip}</span></p>`;
 
-  // starShips.forEach((starShip) => {
-  //   if (starShip) {
-  //     if (starShip['speed'] > maxSpeed) {
-  //       fastestStarship = starShip['name'];
-  //     }
-  //     resultsDiv.insertAdjacentHTML('beforeend', `<p>${starShip['name']}</p>`);
-  //   }
-  // });
-
-  // console.log(fastestStarship);
-// };
+  otherResultsDiv.innerHTML = '<b>Here are other good candidates:</b>';
+  ships.forEach((ship) => {
+    otherResultsDiv.insertAdjacentHTML('beforeend', `<p>${ship['name']}</p>`);
+  });
+};
 
 
 const input = document.querySelector('.qty-input');
 const btn = document.querySelector('button');
-const resultsDiv = document.querySelector('.results');
+const fastestShipDiv = document.querySelector('.fastest-ship');
+const otherResultsDiv = document.querySelector('.other-results');
 
 btn.addEventListener('click', (event) => {
-  fetchSpaceships(spaceShipsUrl, input.value);
+  fetchAll(spaceShipsUrl, input.value);
 });
