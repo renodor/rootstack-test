@@ -17,6 +17,6 @@ Indeed, it seemed nice to have a basic interface for those exercises so I linked
 To keep both exercises independent, each one as its own html and js file (with the name of the exercise).
 Just launch the HTML file in a browser to see and interact with the programm:
 
-* In the exercise 4 you have to type the number of passenger you put an click on the 'Find' button
-* In exercise 5, you hae to chose a terrain from the dropdown and click on the 'Find' button
+* In the exercise 4 you have to type the number of passenger you want an click on the 'Find' button
+* In exercise 5, you have to chose a terrain from the dropdown and click on the 'Find' button
 
