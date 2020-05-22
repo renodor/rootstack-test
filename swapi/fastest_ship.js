@@ -115,7 +115,7 @@ const fetchAllShips = async (url, passengerQty) => {
 
   // if we found more than 1 ship, we need to find the fastest one
   if (cleanedResults.length > 1) {
-    // we loop over our found ships and compare its speed to the last one
+    // we loop over our found ships and compare their speed to the last one
     cleanedResults.forEach((ship, i) => {
       // if we find a ship faster than the last one we need to do three things:
       // - change the value of maxSpeed
@@ -140,7 +140,7 @@ const fetchAllShips = async (url, passengerQty) => {
     fastestShip = `${cleanedResults[0]['name']} (speed: unknown...)`;
   }
 
-  // i kept this console log if you want to check the raw retrieved data
+  // I kept this console log if you want to check the raw retrieved data
   console.log(cleanedResults);
 
   // once we did all that, we can display results
