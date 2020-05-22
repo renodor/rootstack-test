@@ -4,7 +4,7 @@ require 'open-uri'
 # define the target age we want to find
 target_age = 50
 
-# fetch one random user
+# method that fetch one random user
 # we used the randomuser 'inc' parameter to only fetch user names and age
 # (because we don't need the rest of the data here so it, optimize our program)
 def fetch_user
@@ -12,7 +12,7 @@ def fetch_user
   JSON.parse(open(url).read)['results'][0]
 end
 
-# find a random user with a specific age
+# method that find a random user with a specific age
 def find_user(age)
   # initialize our user_age variable (with an impossible age)
   user_age = -1
@@ -32,5 +32,5 @@ end
 # print the target age
 puts "Target age is: #{target_age}"
 
-# print the result
+# call our method and print the result
 puts find_user(target_age)
