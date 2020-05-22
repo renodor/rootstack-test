@@ -16,10 +16,10 @@ const checkAutonomy = (consumables) => {
   let result = false;
 
   // in the API 'consumables' data is a value and a unit (ex: 30 days)
-  // we spit it in an array to have the value first and the unit second
+  // we split it in an array to have the value first and the unit second
   const autonomy = consumables.split(' ');
 
-  // sometimes the value is 'unknown', in that case our array only have one element
+  // sometimes the value is 'unknown', in that case our array only has one element
   // in that case we considere the ship has not enough autonomy, so we keep result has false
   if (autonomy.length > 1) {
     // if autonomy unit is 'week' (or 'weeks'), 'month' (or 'months') or 'year' (or 'years')
@@ -27,7 +27,7 @@ const checkAutonomy = (consumables) => {
     if (autonomy[1][0].match(/[wmy]/)) {
       result = true;
 
-    // if autonomy unti is 'day' (or 'days') value needs to be greater or equal to 7
+    // if autonomy unit is 'day' (or 'days') value needs to be greater or equal to 7
     } else if (autonomy[1][0] === 'd') {
       autonomy[0] >= 7 ? result = true : result = false;
     }
@@ -43,7 +43,7 @@ const checkMovies = async (movieUrls) => {
   while (i < movieUrls.length) {
     // we need to fetch each url to get the 'episode_id' of the movie
     const goodMovie = await fetchData(movieUrls[i])
-        // check if the episode id is eather 4, 5 or 6
+        // check if the episode id is either 4, 5 or 6
         .then((data) => [4, 5, 6].includes(data['episode_id']));
     if (goodMovie) {
       // if we find at least one good movie, we can break the loop and return true
@@ -66,12 +66,12 @@ const fetchShips = async (url, passengerQty) => {
           const enoughAutonomy = checkAutonomy(ship['consumables']);
 
           // if we found one ship that has both enough space and enough autonomy
-          // we hae to check if it appears in the good movies
+          // we have to check if it appears in the good movies
           if (enoughSpace && enoughAutonomy) {
             return checkMovies(ship['films']).then((goodMovies) => {
               if (goodMovies) {
                 // if we find a ship that passed all filters,
-                // we return and object with its name and its speed
+                // we return an object with its name and its speed
                 return {'name': ship['name'], 'speed': ship['MGLT']};
               } else {
                 // false here means the ship don't belong to the correct movies
@@ -96,7 +96,7 @@ const fetchShips = async (url, passengerQty) => {
 const fetchAllShips = async (url, passengerQty) => {
   const results = [];
 
-  // we have to featch page after page (to consolidate results in the same array)
+  // we have to fetch page after page (to consolidate results in the same array)
   // so fetch one page, and as long as we find a 'next page', we continue
   while (url) {
     results.push(await fetchShips(url, passengerQty));
@@ -107,8 +107,7 @@ const fetchAllShips = async (url, passengerQty) => {
   // to have only the ships that passed all filters
   cleanedResults = results.flat().filter(Boolean);
 
-  // we define variables that will contain our fastest ship
-  // its id in the cleanedResults array and its speed
+  // we define variables that will contain our fastest ship its id and its speed
   let maxSpeed = 0;
   let fastestShip = '';
   let fastestShipId = 0;
@@ -129,12 +128,12 @@ const fetchAllShips = async (url, passengerQty) => {
     });
 
   // if we found only 1 ship, we put it as the fastest one by default
-  } else if (cleanedResults.length == 1) {
+  } else if (cleanedResults.length === 1) {
     fastestShip = `${cleanedResults[0]['name']} (speed: ${cleanedResults[0]['speed']} MGLT)`;
   }
 
   // if we do have results but we can't determine what is the fastest ship
-  // if may needs that all found ships have 'unknown' speed...
+  // it may be that all found ships have 'unknown' speed...
   // in that case we take the first one by default
   if (cleanedResults.length > 1 && !fastestShip) {
     fastestShip = `${cleanedResults[0]['name']} (speed: unknown...)`;

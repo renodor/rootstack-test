@@ -3,7 +3,7 @@ const fetchData = (url) => {
   return fetch(url).then((response) => response.json());
 };
 
-// method to fetch 1 page of the swapi starship API
+// method to fetch 1 page of the swapi planet API
 const fetchPlanets = async (url, terrain) => {
   const planets = await fetchData(url)
       .then((data) => {
@@ -28,7 +28,7 @@ const fetchPlanets = async (url, terrain) => {
 const fetchAllPlanets = async (url, terrain) => {
   const results = [];
 
-  // we have to featch page after page (to consolidate results in the same array)
+  // we have to fetch page after page (to consolidate results in the same array)
   // so fetch one page, and as long as we find a 'next page', we continue
   while (url) {
     results.push(await fetchPlanets(url, terrain));
@@ -38,8 +38,7 @@ const fetchAllPlanets = async (url, terrain) => {
   // once we got all results, we can flatten our array
   cleanedResults = results.flat();
 
-  // we define variables that will contain our most populated planet
-  // its id in the cleanedResults array and its speed
+  // we define variables that will contain our most populated planet its id and its speed
   let maxPopulation = 0;
   let mostPopulatedPlanet = '';
   let mostPopulatedPlanetId = 0;
@@ -60,11 +59,11 @@ const fetchAllPlanets = async (url, terrain) => {
     });
 
   // if we found only 1 planet, we put it as the most populated one by default
-  } else if (cleanedResults.length == 1) {
+  } else if (cleanedResults.length === 1) {
     mostPopulatedPlanet = `${cleanedResults[0]['name']} (population: ${cleanedResults[0]['population']})`;
   }
 
-  // i kept this console log if you want to check the raw retrieved data
+  // I kept this console log if you want to check the raw retrieved data
   console.log(cleanedResults);
 
   // once we did all that, we can display results
@@ -95,7 +94,7 @@ const displayResults = (planets, mostPopulatedPlanet, mostPopulatedPlanetId) => 
     planets.forEach((planet, i) => {
       // we make sure to exclude the most populated planet from the other results,
       // otherwise it will be repeated on the page...
-      if (i != mostPopulatedPlanet) {
+      if (i != mostPopulatedPlanetId) {
         otherResultsDiv.insertAdjacentHTML('beforeend', `<p>${planet['name']}</p>`);
       }
     });
@@ -170,3 +169,4 @@ const otherResultsDiv = document.querySelector('.other-results');
 btn.addEventListener('click', (event) => {
   fetchAllPlanets(planetsUrl, select.value);
 });
+
