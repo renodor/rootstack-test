@@ -7,6 +7,7 @@ I intentionnally heavily commented all my files and methods in order to explain 
 I decided to do those exercise in Ruby.
 Each exercise is in a separate file with the name of the exercise.
 I didn't use any front end framework, so to see it working you will have to launch it from the terminal with the command `$ruby file_name.rb`
+
 I did print some informations and all the results so you will see it in the terminal.
 
 ## Exercise 4, 5 (Swapi)
