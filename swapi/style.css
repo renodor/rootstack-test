@@ -9,6 +9,10 @@ body {
     align-items: center;
 }
 
+input {
+  width: 50px;
+}
+
 .fastest-ship {
   border-bottom: 1px solid lightgray;
   padding-bottom: 10px;
